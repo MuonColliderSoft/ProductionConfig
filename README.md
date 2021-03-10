@@ -2,7 +2,14 @@
 
 Production configuration for MuonCollider software.
 
-## Available samples
+## Guidelines for new samples
+Procedure to share your newly generated sample:
+- make sure you collect all information (metadata) needed and detailed in the [Sample description](#-sample-description) section below;
+- either fork or create a branch from the master of this repository and add all the configuration files with the convention, with a description in the corresponding `README.md`; see the [Folder Structure](#-folder-structure) section below;
+- open a pull request ([help on pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)) to the master branch;
+- in case of questions or issues, feel free to contact us or open a github issue [here](https://github.com/MuonColliderSoft/ProductionConfig/issues).
+
+## Sample description
 A list of available samples can be found here: https://confluence.infn.it/display/muoncollider/Monte+Carlo+Simulated+Samples
 
 and contains the following information:
@@ -26,12 +33,17 @@ where:
 The `simulation` and `reconstruction` folders contain the relevant (mostly XML) configuration files for the respective production step.
 The `evtgen` folder contains the run card for the various processes.
 
-Each set of configuration files used for a sample should have its own folder, using links in case the files are the same as previous setups, e.g.
+Each set of configuration files used for a sample should have its own folder and a `README.md` file, using links in case the files are the same as previous setups, e.g.
 
 ```
 evtgen
  001-whizard-bbbar
+  README.md
+  bbbar.sin
+  ...
  002-pythia8-4quarkslnu
+  README.md
+  
  ...
 simulation
  001-fullDetector
@@ -55,4 +67,6 @@ reconstruction
 For samples using the same configuration, please commit a link (indicated as '->' in the example above) the new folder to the existing one containing the same configuration (git allows to commit links!).
 
 For samples only modifying small parts of the configuration, you can commit links (indicated as '->' in the example above) for all the unchanged files of the configuration you started from.
+
+Please use the `README.md` file to include a longer description of the setup/settings and any relevant note that is useful for reproducing the sample (e.g. for event generation it could include a recipe for sample production, generator version, etc..)
 
