@@ -35,28 +35,27 @@ At the end of the process two outputs files are produced with suffix: _trkHits_ 
 
 _trkHits_ contains all and only the tracker hits; i.e. the following collections:
 
-InnerTrackerBarrelCollection
-InnerTrackerEndcapCollection
-OuterTrackerBarrelCollection
-OuterTrackerEndcapCollection
-VertexBarrelCollection
-VertexEndcapCollection
-
+      InnerTrackerBarrelCollection
+      InnerTrackerEndcapCollection
+      OuterTrackerBarrelCollection
+      OuterTrackerEndcapCollection  
+      VertexBarrelCollection
+      VertexEndcapCollection
 
 _allHits_ contains all hits; i.e. the following collections:
 
-ECalBarrelCollection
-ECalEndcapCollection
-HCalBarrelCollection
-HCalEndcapCollection
-HCalRingCollection
-InnerTrackerBarrelCollection
-InnerTrackerEndcapCollection
-OuterTrackerBarrelCollection
-OuterTrackerEndcapCollection
-VertexBarrelCollection
-VertexEndcapCollection
-YokeBarrelCollection
-YokeEndcapCollection
+      ECalBarrelCollection
+      ECalEndcapCollection
+      HCalBarrelCollection
+      HCalEndcapCollection
+      HCalRingCollection
+      InnerTrackerBarrelCollection
+      InnerTrackerEndcapCollection
+      OuterTrackerBarrelCollection
+      OuterTrackerEndcapCollection
+      VertexBarrelCollection
+      VertexEndcapCollection
+      YokeBarrelCollection
+      YokeEndcapCollection
 
 
