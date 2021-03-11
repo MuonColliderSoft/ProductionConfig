@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+
+<constants>
+</constants>
+
+<!-- == List of processors to execute == -->
+
+<execute>
+  <processor name="EventNumber" />
+  <processor name="InitDD4hep"/>
+  <processor name="OverlayBIB"/>
+  <processor name="Output_ALL"/>
+  <processor name="Output_TRK"/>
+</execute>
+
+
+<!-- == Global setup == -->
+
+<processor name="EventNumber" type="Statusmonitor">
+  <parameter name="HowOften" type="int">1 </parameter>
+  <parameter name="Verbosity" type="string"> MESSAGE </parameter>
+</processor>
+
+<!-- == Input configuration == -->
+
+<global>
+  <parameter name="LCIOInputFiles">
+    pgun_dummy.slcio
+  </parameter>
+  <parameter name="MaxRecordNumber" value="-1" />
+  <parameter name="SkipNEvents" value="0" />
+  <parameter name="SupressCheck" value="false" />
+  <parameter name="Verbosity" options="DEBUG0-9,MESSAGE0-9,WARNING0-9,ERROR0-9,SILENT">MESSAGE0 </parameter>
+  <parameter name="RandomSeed" value="1234567890" />
+</global>
+
+<!-- == Output configuration == -->
+
+<processor name="Output_ALL" type="LCIOOutputProcessor">
+  <parameter name="LCIOOutputFile" type="string"> sim_allHits.slcio </parameter>
+  <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+  <parameter name="Verbosity" type="string">WARNING </parameter>
+  <parameter name="DropCollectionNames" type="StringVec"> </parameter>
+  <parameter name="DropCollectionTypes" type="StringVec">
+    MCParticle
+  </parameter>
+  <parameter name="KeepCollectionNames" type="StringVec"> </parameter>
+</processor>
+
+<processor name="Output_TRK" type="LCIOOutputProcessor">
+  <parameter name="LCIOOutputFile" type="string"> sim_trkHits.slcio </parameter>
+  <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+  <parameter name="Verbosity" type="string">WARNING </parameter>
+  <parameter name="DropCollectionNames" type="StringVec">
+    RelationCaloHit
+    RelationMuonHit
+  </parameter>
+  <parameter name="DropCollectionTypes" type="StringVec">
+    MCParticle
+    SimCalorimeterHit
+    CalorimeterHit
+  </parameter>
+  <parameter name="KeepCollectionNames" type="StringVec"> </parameter>
+</processor>
+
+<!-- == DD4hep configuration == -->
+
+<processor name="InitDD4hep" type="InitializeDD4hep">
+  <parameter name="DD4hepXMLFile" type="string">
+    /opt/ilcsoft/muonc/detector-simulation/geometries/MuColl_v1/MuColl_v1.xml
+  </parameter>
+  <parameter name="EncodingStringParameterName" type="string"> GlobalTrackerReadoutID </parameter>
+</processor>
+
+
+<!-- == Overlay configuration == -->
+
+<group name="Overlay">
+  <parameter name="MCParticleCollectionName" type="string">MCParticle </parameter>
+  <parameter name="MCPhysicsParticleCollectionName" type="string"> MCPhysicsParticles </parameter>
+  <parameter name="Delta_t" type="float" value="1"/>
+  <parameter name="NBunchtrain" type="int" value="1"/>
+  <parameter name="MergeMCParticles" type="bool" value="false"/>
+
+  <parameter name="Collection_IntegrationTimes" type="StringVec" >
+
+    VertexBarrelCollection -0.18 0.24
+    VertexEndcapCollection -0.18 0.24
+
+    InnerTrackerBarrelCollection -0.36 0.48
+    InnerTrackerEndcapCollection -0.36 0.48
+
+    OuterTrackerBarrelCollection -0.36 0.48
+    OuterTrackerEndcapCollection -0.36 0.48
+
+    ECalBarrelCollection -0.25 10.
+    ECalEndcapCollection -0.25 10.
+    ECalPlugCollection   -0.25 10.
+
+    HCalBarrelCollection -0.25 10.
+    HCalEndcapCollection -0.25 10.
+    HCalRingCollection   -0.25 10.
+
+    YokeBarrelCollection -0.25 10.
+    YokeEndcapCollection -0.25 10.
+
+  </parameter>
+  <parameter name="PhysicsBX" type="int" value="1"/>
+  <parameter name="Poisson_random_NOverlay" type="bool" value="false"/>
+  <parameter name="RandomBx" type="bool" value="false"/>
+  <parameter name="TPCDriftvelocity" type="float" value="0.05"/>
+  <parameter name="BackgroundFileNames" type="StringVec"> </parameter>
+
+  <processor name="OverlayBIB" type="OverlayTimingGeneric">
+    <parameter name="BackgroundFileNames" type="StringVec">
+      simpl.slcio
+      simmi.slcio
+    </parameter>
+    <parameter name="StartBackgroundFileIndex" type="int" value="0"/>
+    <parameter name="AllowReusingBackgroundFiles" type="bool" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">MESSAGE </parameter>
+    <parameter name="NBunchtrain" type="int" value="1" />
+    <parameter name="NumberBackground" type="float" value="2993" />
+  </processor>
+
+</group>
+
+</marlin>
