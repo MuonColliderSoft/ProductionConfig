@@ -6,4 +6,3 @@ Configuration file used to simulate a bunch crossing starting from a seed (gener
 - Physics.list: QGSP_BERT
 
 
-
