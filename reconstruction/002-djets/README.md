@@ -1,11 +1,12 @@
-# Reconstruction of djets using a 3 steps strategy.
+# Reconstruction of dijets using a 3 steps strategy.
 
 ## Step1: CaloJet
 
 In the first phase jets are reconstructed using only calorimeter's deposits.
 
-### These are the exectued processors:
+This is the list of processors:
 
+```
 <execute>
   <processor name="MyAIDAProcessor"/>
   <processor name="EventNumber" />
@@ -20,9 +21,10 @@ In the first phase jets are reconstructed using only calorimeter's deposits.
   <processor name="MyFastJetProcessor_step1"/>
   <processor name="Output_DST"/>
 </execute>
+```
+The signal's hits are overlayed with the trimmed hits of the BIB (it takes a random BIB beetween the 30 availables), official time cuts are applyed:
 
-### The signal's hits are overlayed with the trimmed hits of the BIB (it takes a random BIB beetween the 30 availables), official time cuts are applyed:
-
+```
 VertexBarrelCollection -0.18 0.24
 VertexEndcapCollection -0.18 0.24
 InnerTrackerBarrelCollection -0.36 0.48
@@ -37,16 +39,16 @@ HCalEndcapCollection 0.25
 HCalRingCollection 0.25
 YokeBarrelCollection 0.25
 YokeEndcapCollection 0.2
-
-### Jets are built using kt_algorithm with R=0.5
+```
+Jets are built using kt_algorithm with R=0.5
 
 ## Step2: regionalTrack
 
 In this step tracks are built using a cone x cone strategy. This means that we limit the tracking to a cone region with R=0.7 around the direction calculated in the previous step, a tracking is perfomed for each jet found in step1.
 NB the step requires the new ConformalTracking processor: see https://github.com/MuonColliderSoft/ConformalTracking/tree/conetracking
 
-### These are the exectued processors:
-
+This is the list pf processors:
+```
 <execute>
   <processor name="MyAIDAProcessor"/>
   <processor name="EventNumber" />
@@ -65,9 +67,9 @@ NB the step requires the new ConformalTracking processor: see https://github.com
   <processor name="ClonesAndSplitTracksFinder"/>
   <processor name="Output_DST"/>
 </execute>
-
+```
 ### Tracker hits are first of all digitizied (default parameters) and then filtered with the double layer strategy:
-
+```
 <processor name="FilterDL_VXDB" type="FilterDoubleLayerHits">
   <parameter name="DoubleLayerCuts" type="StringVec">
      0 1 0.55 0.3
@@ -83,9 +85,9 @@ NB the step requires the new ConformalTracking processor: see https://github.com
     4 5 0.4 0.06
     6 7 0.3 0.042
   </parameter>
-
-### For the tracking (limited to a cone region) we use a simple strategy in three steps:
-
+```
+For the tracking (limited to a cone region) we use a simple strategy in three steps:
+```
 [VXD]
   @Collections : VXDTrackerHits_DLFiltered
   @Parameters : MaxCellAngle : 0.025; MaxCellAngleRZ : 0.025; Chi2Cut : 100; MinClustersOnTrack : 4; MaxDistance : 0.015; SlopeZRange: 5.0; HighPTCut: 0.5;
@@ -101,13 +103,13 @@ NB the step requires the new ConformalTracking processor: see https://github.com
   @Parameters : MaxCellAngle : 0.05; MaxCellAngleRZ : 0.05; Chi2Cut : 2000; MinClustersOnTrack : 4; MaxDistance : 0.02; SlopeZRange: 10.0; HighPTCut: 0.5;
   @Flags : HighPTFit, RadialSearch, VertexToTracker
   @Functions : CombineCollections, ExtendTracks
-
+```
 ## Step3: FullJets
 
 With the last step a full jet reconstruction is done combined tracks and calorimeter's hits.
 
-### These are the exectued processors:
-
+This is the list pf processors:
+```
 <execute>
   <processor name="MyAIDAProcessor"/>
   <processor name="EventNumber" />
@@ -121,9 +123,10 @@ With the last step a full jet reconstruction is done combined tracks and calorim
   <processor name="Output_REC"/>
   <processor name="Output_DST"/>
 </execute>
+```
 
-### Tracks are then filtered using the Refit processor:
-
+Tracks are then filtered using the Refit processor:
+```
 <parameter name="DoCutsOnRedChi2Nhits" type="bool"> true </parameter>
 <parameter name="ReducedChi2Cut" type="double"> 3. </parameter>
 <!--Cuts on Nhits: <detID>,<detID>,... <lower threshold> -->
@@ -132,5 +135,5 @@ With the last step a full jet reconstruction is done combined tracks and calorim
   3,4 1
   5,6 0
 </parameter>
-
-### Jets are built using kt_algorithm with R=0.5
+```
+Jets are built using kt_algorithm with R=0.5
