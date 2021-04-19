@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+
+  <constants>
+  </constants>
+  
+  <execute>
+
+    <!-- ========== setup  ========== -->
+    <processor name="MyAIDAProcessor"/>
+    <processor name="EventNumber" />
+    <processor name="Config" />
+
+    <!-- ========== InitDD4hep.xml  ========== -->
+    <processor name="InitDD4hep"/>
+
+    <!-- ========== TrackerDigitizationi.xml  ========== -->
+    <processor name="VXDBarrelDigitiser"/>
+    <processor name="VXDEndcapDigitiser"/>
+    <processor name="InnerPlanarDigiProcessor"/>
+    <processor name="InnerEndcapPlanarDigiProcessor"/>
+    <processor name="OuterPlanarDigiProcessor"/>
+    <processor name="OuterEndcapPlanarDigiProcessor"/>
+  
+    <processor name="FilterDL_VXDB" />
+    <processor name="FilterDL_VXDE" />
+
+    <!-- ========== Tracking.xml  ========== -->
+    <if condition="Config.TrackingTruth">
+      <processor name="MyTruthTrackFinder"/>
+    </if>
+    <if condition="Config.TrackingConformal">
+      <processor name="ConformalTrackingILC"/>
+      <processor name="ClonesAndSplitTracksFinder"/>
+    </if>
+
+    <!-- ========== output  ========== -->
+    <Xprocessor name="Output_REC"/>
+    <processor name="Output_DST"/> 
+
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      Output_DST_step1.slcio
+    </parameter>
+    <!-- Limit the number of processed records (run+evt): -->
+    <parameter name="MaxRecordNumber" value="-1" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />  
+    <parameter name="Verbosity" options="DEBUG0-9,MESSAGE0-9,WARNING0-9,ERROR0-9,SILENT">MESSAGE </parameter>
+    <parameter name="RandomSeed" value="1234567890" />
+  </global>
+
+<include ref="confile/InitDD4hep.xml"/>
+<include ref="confile/TrackerDigitization.xml"/>
+<include ref="confile/Tracking.xml"/>
+
+  <processor name="Config" type="CLICRecoConfig" >
+    <parameter name="Verbosity" options="DEBUG0-9,MESSAGE0-9,WARNING0-9,ERROR0-9,SILENT"> MESSAGE  </parameter>
+    <!--Which option to use for Overlay: False, BIB. Then use, e.g., Config.OverlayFalse in the condition-->
+    <parameter name="Overlay" type="string">Trimmed</parameter>
+    <!--Possible values and conditions for option Overlay-->
+    <parameter name="OverlayChoices" type="StringVec">Trimmed False Test BIB</parameter>
+    <!--Which option to use for Tracking: Truth, ConformalPlusExtrapolator, Conformal. Then use, e.g., Config.TrackingTruth in the condition-->
+    <parameter name="Tracking" type="string">Conformal </parameter>
+    <!--Possible values and conditions for option Tracking-->
+    <parameter name="TrackingChoices" type="StringVec">Truth Conformal  </parameter>
+    <!--Which option to use for VertexUnconstrained: ON, OFF. Then use, e.g., Config.VertexUnconstrainedOFF in the condition-->
+    <parameter name="VertexUnconstrained" type="string">OFF </parameter>
+    <!--Possible values and conditions for option Tracking-->
+    <parameter name="VertexUnconstrainedChoices" type="StringVec">ON OFF  </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  </processor>
+
+  <processor name="MyAIDAProcessor" type="AIDAProcessor">
+    <!--Processor that handles AIDA files. Creates on directory per processor.  Processors only need to create and fill the histograms, clouds and tuples. Needs to be the first ActiveProcessor-->
+    <!-- compression of output file 0: false >0: true (default) -->
+    <parameter name="Compress" type="int" value="1"/>
+    <!-- filename without extension-->
+    <parameter name="FileName" type="string" value="histograms"/>
+    <!-- type of output file xml (default) or root ( only OpenScientist)-->
+    <parameter name="FileType" type="string" value="root "/>
+  </processor>
+
+  <processor name="EventNumber" type="Statusmonitor">
+    <parameter name="HowOften" type="int">1 </parameter>
+    <parameter name="Verbosity" type="string"> MESSAGE </parameter>
+  </processor>
+
+  <processor name="FilterCone" type="FilterJetConeHits">
+  <!-- Name of the input MC particle collection -->
+  <parameter name="JetCaloCollection" type="string" value="JetCaloOut" />
+  <!-- Name of the input hit collections -->
+  <parameter name="TrackerHitInputCollections" type="StringVec">
+    VXDTrackerHits
+    VXDEndcapTrackerHits
+    ITrackerHits
+    ITrackerEndcapHits
+    OTrackerHits
+    OTrackerEndcapHits
+  </parameter>
+  <!-- Name of the input simhit collections -->
+  <parameter name="TrackerSimHitInputCollections" type="StringVec">
+    VertexBarrelCollection
+    VertexEndcapCollection
+    InnerTrackerBarrelCollection
+    InnerTrackerEndcapCollection
+    OuterTrackerBarrelCollection
+    OuterTrackerEndcapCollection
+  </parameter>
+  <!-- Name of the input hit relation collections -->
+  <parameter name="TrackerHitInputRelations" type="StringVec">
+    VXDTrackerHitRelations
+    VXDEndcapTrackerHitRelations
+    InnerTrackerBarrelHitsRelations
+    InnerTrackerEndcapHitsRelations
+    OuterTrackerBarrelHitsRelations
+    OuterTrackerEndcapHitsRelations
+  </parameter>
+  <!-- Name of the output filtered hit collection -->
+  <parameter name="TrackerHitOutputCollections" type="StringVec">
+    VXDTrackerHits_Cone
+    VXDEndcapTrackerHits_Cone
+    ITrackerHits_Cone
+    ITrackerEndcapHits_Cone
+    OTrackerHits_Cone
+    OTrackerEndcapHits_Cone
+  </parameter>
+  <!-- Name of the output filtered simhit collection -->
+  <parameter name="TrackerSimHitOutputCollections" type="StringVec">
+    VertexBarrelCollection_Cone
+    VertexEndcapCollection_Cone
+    InnerTrackerBarrelCollection_Cone
+    InnerTrackerEndcapCollection_Cone
+    OuterTrackerBarrelCollection_Cone
+    OuterTrackerEndcapCollection_Cone
+  </parameter>
+  <!-- Name of the output filtered hit relation collection -->
+  <parameter name="TrackerHitOutputRelations" type="StringVec">
+    VXDTrackerHitRelations_Cone
+    VXDEndcapTrackerHitRelations_Cone
+    InnerTrackerBarrelHitsRelations_Cone
+    InnerTrackerEndcapHitsRelations_Cone
+    OuterTrackerBarrelHitsRelations_Cone
+    OuterTrackerEndcapHitsRelations_Cone
+  </parameter>
+  <!-- Angular distance between the hits and the particle direction -->
+  <parameter name="DeltaRCut" type="float" value="0.7" />
+  <parameter name="FillHistograms" type="bool" value="true" />
+  <parameter name="Verbosity" type="string"> MESSAGE0 </parameter>
+</processor>
+
+  <processor name="Output_REC" type="LCIOOutputProcessor">
+    <!--   standard output: full reconstruction keep all collections -->
+    <parameter name="LCIOOutputFile" type="string"> Output_REC.slcio </parameter>
+    <parameter name="FullSubsetCollections" type="StringVec"> EfficientMCParticles InefficientMCParticles </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+    <!-- <parameter name="SplitFileSizekB" type="int">996147 </parameter> -->
+    <parameter name="Verbosity" type="string">WARNING </parameter>
+    <parameter name="DropCollectionNames" type="StringVec">  </parameter>
+    <parameter name="DropCollectionTypes" type="StringVec">  </parameter>
+    <parameter name="KeepCollectionNames" type="StringVec">  </parameter>
+  </processor>
+
+  <processor name="Output_DST" type="LCIOOutputProcessor">
+    <!--   dst output: keep only collections for analysis -->
+    <parameter name="LCIOOutputFile" type="string"> Output_DST_step2.slcio </parameter>
+    <parameter name="FullSubsetCollections" type="StringVec">
+    </parameter>
+    <parameter name="DropCollectionTypes" type="StringVec">
+      MCParticle
+    </parameter>
+    <parameter name="KeepCollectionNames" type="StringVec">
+     SiTracks 
+     SiTracks_Refitted 
+    </parameter>
+    <parameter name="DropCollectionNames" type="StringVec"> MCParticle </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+    <!-- <parameter name="SplitFileSizekB" type="int">996147 </parameter> -->
+    <parameter name="Verbosity" type="string">WARNING </parameter>
+  </processor>
+
+</marlin>
+
