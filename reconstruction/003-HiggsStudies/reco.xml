@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+
+  <constants>
+  </constants>
+  
+  <execute>
+
+    <!-- ========== setup  ========== -->
+    <processor name="MyAIDAProcessor"/>
+    <processor name="EventNumber" />
+    <processor name="Config" />
+
+    <!-- ========== InitDD4hep.xml  ========== -->
+    <processor name="InitDD4hep_mod4"/>
+
+    <!-- ========== LCTuple.xml  ========== -->
+    <XXXprocessor name="LCTupleDefault" />
+
+    <!-- ========== DigiOverlay.xml  ========== -->
+    <if condition="Config.OverlayBIB">
+      <processor name="OverlayBIB"/>
+    </if>
+    <if condition="Config.OverlayFalse">
+      <processor name="OverlayFalse"/>
+    </if>
+    <if condition="Config.OverlayTest">
+      <processor name="OverlayTest"/>
+    </if>
+
+    <!-- ========== TrackerDigitizationi.xml  ========== -->
+    <processor name="VXDBarrelDigitiser"/>
+    <processor name="VXDEndcapDigitiser"/>
+    <processor name="InnerPlanarDigiProcessor"/>
+    <processor name="InnerEndcapPlanarDigiProcessor"/>
+    <processor name="OuterPlanarDigiProcessor"/>
+    <processor name="OuterEndcapPlanarDigiProcessor"/>
+
+    <!-- ========== Tracking.xml  ========== -->
+    <if condition="Config.TrackingTruth">
+      <processor name="MyTruthTrackFinder"/>
+    </if>
+    <if condition="Config.TrackingConformal">
+      <processor name="ConformalTrackingILC"/>
+      <processor name="ClonesAndSplitTracksFinder"/>
+    </if>
+    <processor name="Refit" />
+
+    <!-- ========== Calo.xml ============ -->
+    <processor name="MyDDCaloDigi"/>
+    <processor name="MyDDSimpleMuonDigi"/>
+    <processor name="MyDDMarlinPandora"/>
+    <group name="MergeCollections" />
+
+    <!-- ========== Monitoring.xml  ========== -->
+    <processor name="MyClicEfficiencyCalculator"/>
+    <processor name="MyRecoMCTruthLinker"/>
+    <processor name="MyTrackChecker"/>
+
+    <!-- =============== PFOSelector.xml ================= -->
+    <group name="PfoSelector" />
+
+    <!-- =============== VertexJet.xml ================== -->
+      <processor name="MyFastJetProcessor"/>
+
+    <!-- ========== output  ========== -->
+    <processor name="Output_REC"/>
+
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+/users/muoncollider/buoninco/MuCollDet/3_TeV_studies/geo_v1/HH_coupl_04/mumu_HHnunu_3_04_0_1.slcio
+    </parameter>
+    <!-- Limit the number of processed records (run+evt): -->
+    <parameter name="MaxRecordNumber" value="-1" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />  
+    <parameter name="Verbosity" options="DEBUG0-9,MESSAGE0-9,WARNING0-9,ERROR0-9,SILENT">MESSAGE </parameter>
+    <parameter name="RandomSeed" value="1234567890" />
+  </global>
+
+<include ref="confile/InitDD4hep.xml"/>
+<include ref="confile/LCTuple.xml"/>
+<include ref="confile/DigiOverlay.xml"/>
+<include ref="confile/TrackerDigitization.xml"/>
+<include ref="confile/Tracking.xml"/>
+<include ref="confile/Calo.xml"/>
+<include ref="confile/Monitoring.xml"/>
+<include ref="confile/PFOSelector.xml"/>
+<include ref="confile/VertexJet.xml"/>
+
+  <processor name="Config" type="CLICRecoConfig" >
+    <parameter name="Verbosity" options="DEBUG0-9,MESSAGE0-9,WARNING0-9,ERROR0-9,SILENT"> MESSAGE  </parameter>
+    <!--Which option to use for Overlay: False, BIB. Then use, e.g., Config.OverlayFalse in the condition-->
+    <parameter name="Overlay" type="string">False</parameter>
+    <!--Possible values and conditions for option Overlay-->
+    <parameter name="OverlayChoices" type="StringVec">False Test BIB Trimmed</parameter>
+    <!--Which option to use for Tracking: Truth, ConformalPlusExtrapolator, Conformal. Then use, e.g., Config.TrackingTruth in the condition-->
+    <parameter name="Tracking" type="string">Conformal </parameter>
+    <!--Possible values and conditions for option Tracking-->
+    <parameter name="TrackingChoices" type="StringVec">Truth Conformal  </parameter>
+    <!--Which option to use for VertexUnconstrained: ON, OFF. Then use, e.g., Config.VertexUnconstrainedOFF in the condition-->
+    <parameter name="VertexUnconstrained" type="string">OFF </parameter>
+    <!--Possible values and conditions for option Tracking-->
+    <parameter name="VertexUnconstrainedChoices" type="StringVec">ON OFF  </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+  </processor>
+
+  <processor name="MyAIDAProcessor" type="AIDAProcessor">
+    <!--Processor that handles AIDA files. Creates on directory per processor.  Processors only need to create and fill the histograms, clouds and tuples. Needs to be the first ActiveProcessor-->
+    <!-- compression of output file 0: false >0: true (default) -->
+    <parameter name="Compress" type="int" value="1"/>
+    <!-- filename without extension-->
+    <parameter name="FileName" type="string" value="histograms"/>
+    <!-- type of output file xml (default) or root ( only OpenScientist)-->
+    <parameter name="FileType" type="string" value="root "/>
+  </processor>
+
+  <processor name="EventNumber" type="Statusmonitor">
+    <parameter name="HowOften" type="int">1 </parameter>
+    <parameter name="Verbosity" type="string"> MESSAGE </parameter>
+  </processor>
+
+  <processor name="Output_REC" type="LCIOOutputProcessor">
+    <!--   standard output: full reconstruction keep all collections -->
+    <parameter name="LCIOOutputFile" type="string"> Output_REC.slcio </parameter>
+    <parameter name="FullSubsetCollections" type="StringVec"> EfficientMCParticles InefficientMCParticles </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="None"/>
+    <parameter name="SplitFileSizekB" type="int">996147 </parameter> 
+    <parameter name="Verbosity" type="string">WARNING </parameter>
+    <parameter name="DropCollectionNames" type="StringVec">  </parameter>
+    <parameter name="DropCollectionTypes" type="StringVec">  </parameter>
+    <parameter name="KeepCollectionNames" type="StringVec">  </parameter>
+  </processor>
+
+  <processor name="Output_DST" type="LCIOOutputProcessor">
+    <!--   dst output: keep only collections for analysis -->
+    <parameter name="LCIOOutputFile" type="string"> Output_DST.slcio </parameter>
+    <parameter name="FullSubsetCollections" type="StringVec">
+    </parameter>
+    <parameter name="DropCollectionTypes" type="StringVec">
+      SimTrackerHit
+      Track
+      LCRelation
+      MCParticle
+    </parameter>
+    <parameter name="KeepCollectionNames" type="StringVec">
+     SiTracks 
+     SiTracks_Refitted 
+    </parameter>
+    <parameter name="DropCollectionNames" type="StringVec"> MCParticle </parameter>
+    <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
+    <!-- <parameter name="SplitFileSizekB" type="int">996147 </parameter> -->
+    <parameter name="Verbosity" type="string">WARNING </parameter>
+  </processor>
+
+</marlin>
+
