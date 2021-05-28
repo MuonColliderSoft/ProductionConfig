@@ -293,7 +293,7 @@ Output_REC.016.slcio
   <parameter name="fillMEInfo" type="bool">true</parameter>
   <!--check on MC truth for on-shell bosons-->
   <parameter name="doDiBosonChecks" type="bool">false</parameter>
-  <parameter name="OutputRootFileName" type="string">JetStudy_WW1000_11814_CLIC_o3_v14_CT_TightSelectedPandoraPFOs_testnew.root
+  <parameter name="OutputRootFileName" type="string">QaurkStudy
   </parameter>
 </processor>
 
