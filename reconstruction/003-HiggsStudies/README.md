@@ -1,4 +1,4 @@
-## Configuration files used in these SIGNAL processes reconstruction:
+## Configuration files used for these SIGNAL processes reconstruction:
 
 - mumu --> HHnuanu --> bbbbnuanu
 - mumu --> 4bnuanu4bnuanu G1 
