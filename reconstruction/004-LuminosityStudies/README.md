@@ -1,6 +1,6 @@
 # Configuration files used for the luminosity studies
 
-These files refer to an old configuration (Novembee 2020) before the official ones (see for example 003-HiggsStudies).
+These files refer to an old configuration (November 2020) before the official ones (see for example 003-HiggsStudies).
 
 It differs from 003-HiggsStudies for:
 
