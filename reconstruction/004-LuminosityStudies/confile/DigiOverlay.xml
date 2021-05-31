@@ -1,0 +1,74 @@
+<group name="Overlay">
+  <parameter name="MCParticleCollectionName" type="string">MCParticle </parameter>
+  <!--The output MC Particle Collection Name for the physics event-->
+  <parameter name="MCPhysicsParticleCollectionName" type="string"> MCPhysicsParticles </parameter>
+  <!--Time difference between bunches in the bunch train in ns-->
+  <parameter name="Delta_t" type="float" value="1"/>
+  <!--Number of bunches in a bunch train-->
+  <parameter name="NBunchtrain" type="int" value="1"/>
+
+  <parameter name="Collection_IntegrationTimes" type="StringVec" >
+    VertexBarrelCollection        0.3
+    VertexEndcapCollection        0.3
+
+    InnerTrackerBarrelCollection  0.6
+    InnerTrackerEndcapCollection  0.6
+
+    OuterTrackerBarrelCollection  0.6
+    OuterTrackerEndcapCollection  0.6
+
+    ECalBarrelCollection          10.
+    ECalEndcapCollection          10.
+    ECalPlugCollection            10.
+
+    HCalBarrelCollection          10.
+    HCalEndcapCollection          10.
+    HCalRingCollection            10.
+
+    YokeBarrelCollection          10.
+    YokeEndcapCollection          10.
+
+  </parameter>
+  <!--Number of the Bunch crossing of the physics event-->
+  <parameter name="PhysicsBX" type="int" value="1"/>
+  <!--Draw random number of Events to overlay from Poisson distribution with  mean value NumberBackground-->
+  <parameter name="Poisson_random_NOverlay" type="bool" value="false"/>
+  <!--Place the physics event at an random position in the train - overrides PhysicsBX-->
+  <parameter name="RandomBx" type="bool" value="false"/>
+  <!--[mm/ns] (float) - default 5.0e-2 (5cm/us)-->
+  <parameter name="TPCDriftvelocity" type="float" value="0.05"/>
+  <parameter name="BackgroundFileNames" type="StringVec"> </parameter>
+
+  <processor name="OverlayFalse" type="OverlayTimingGeneric">
+    <parameter name="BackgroundFileNames" type="StringVec"> /dev/null</parameter>
+    <parameter name="NBunchtrain" type="int" value="0"/>
+    <parameter name="NumberBackground" type="float" value="0."/>
+  </processor>
+
+  <processor name="OverlayBIB" type="OverlayTimingGeneric">
+    <parameter name="BackgroundFileNames" type="StringVec">
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j1.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j2.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j3.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j4.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j5.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j6.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j7.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mumi-1e3x500-26m-lowth-excl_j8.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j1.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j2.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j3.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j4.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j5.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j6.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j7.slcio
+      /muoncdata/users/bartosik/clic/out/digi_bkg_QGSP_BERT/mod3_25ns_nEkin150MeV/c0/sim_mupl-1e3x500-26m-lowth-excl_j8.slcio
+    </parameter>
+    <parameter name="StartBackgroundFileIndex" type="int" value="0"/>
+    <parameter name="AllowReusingBackgroundFiles" type="bool" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">WARNING </parameter>
+    <parameter name="NBunchtrain" type="int" value="1" />
+    <parameter name="NumberBackground" type="float" value="2993" />
+  </processor>
+
+</group>
