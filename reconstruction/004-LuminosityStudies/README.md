@@ -1,4 +1,4 @@
-# Configuration files used in the luminosity studies
+# Configuration files used for the luminosity studies
 
 These files refer to an old configuration (Novembee 2020) before the official ones (see for example 003-HiggsStudies).
 
