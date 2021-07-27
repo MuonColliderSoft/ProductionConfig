@@ -1,0 +1,83 @@
+# MUONCOLL_hhh.sin
+# Simple complete physics example: Higgs search at LEP
+########################################################################
+#
+# Copyright (C) 1999-2019 by 
+#     Wolfgang Kilian <kilian@physik.uni-siegen.de>
+#     Thorsten Ohl <ohl@physik.uni-wuerzburg.de>
+#     Juergen Reuter <juergen.reuter@desy.de>
+#     with contributions from
+#     cf. main AUTHORS file
+#
+# WHIZARD is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by 
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# WHIZARD is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+########################################################################
+
+## Author Mauro Chiesa and DL
+# 
+#
+#
+model = SM_ac
+# set the Higgs selfcoupling with respect to SM gh3/gh3_SM
+fac_gh3=0.8
+
+#Set width of bosons to zero to avoid gauge cancellations 
+wZ     =0d0
+wW     =0d0
+wH     =0d0
+me     = 0.d0
+mmu    = 0.d0
+
+alias ANU = nuebar:numubar:nutaubar
+alias NNU = nue:numu:nutau
+#Double Higgs production
+process testhhdec = "mu+", "mu-" => "H", "H", NNU, ANU
+#Higgs decay
+process hbb = "H" => "b", "bbar"
+
+#Call O'Mega and compile the matrix elements 
+compile
+
+sqrts = 3 TeV
+seed = 1233
+cuts = all M > 150 GeV [NNU, ANU]
+
+#Set pyrhia8
+?ps_fsr_active = true
+?hadronization_active = true
+?allow_shower = true
+#
+$shower_method = "PYTHIA8"
+$hadronization_method = "PYTHIA8"
+#$hadronization_method = "PYTHIA6"
+
+
+# Compute Cross Section for Hbb
+integrate (hbb)
+# Specify H can decay
+unstable H (hbb)
+# Simulate the full process
+integrate (testhhdec){  iterations = 20:8000000:"gw", 5:20000000 }
+
+#Generate events sample
+simulate (testhhdec){
+n_events=10000
+
+$sample = "HH_bb_events"
+sample_format = hepmc
+}
+
+
+# end 
