@@ -1,1 +1,1 @@
-Electro gun.
+Electron gun.
