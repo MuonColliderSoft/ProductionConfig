@@ -53,9 +53,10 @@ jobs:
           ddsim --inputFiles electronGun_evgen.slcio --outputFile electronGun_sim.slcio --steeringFile simulation/013-electrongun/sim_steer.py
   reco:
     runs-on: ubuntu-latest
-    container: infnpd/mucoll-ilc-framework:1.6-centos8
-    volumes:
-      - reconstruction/013-electrongun:/data/config
+    container:
+      image: infnpd/mucoll-ilc-framework:1.6-centos8
+      volumes:
+        - reconstruction/013-electrongun:/data/config
     needs: sim
     steps:
       -
