@@ -1,0 +1,56 @@
+name: Build Docker Images
+on:
+  push:
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'master'
+jobs:
+  evgen:
+    runs-on: ubuntu-latest
+    container: infnpd/mucoll-ilc-framework:1.6-centos8
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        id: cache-evgen
+        name: Cache Event Generation
+        uses: actions/cache@v2
+        with:
+          path: ./electronGun_evgen.slcio
+          key: events-${{ hashFiles('evtgen/013-electrongun/gen_electron_gun.py') }}
+      - name: Setup Environment
+        if: steps.cache-evgen.outputs.cache-hit != 'true'
+        run: source /opt/ilcsoft/muonc/init_ilcsoft.sh
+      - name: Generate Events
+        if: steps.cache-evgen.outputs.cache-hit != 'true'
+        run: python evtgen/013-electrongun/gen_electron_gun.py -o electronGun_evgen.slcio -n 10 && ls
+  sim:
+    runs-on: ubuntu-latest
+    container: infnpd/mucoll-ilc-framework:1.6-centos8
+    needs: evgen
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        id: cache-evgen
+        name: Cache Event Generation
+        uses: actions/cache@v2
+        with:
+          path: ./electronGun_evgen.slcio
+          key: events-${{ hashFiles('evtgen/013-electrongun/gen_electron_gun.py') }}
+      - name: Setup Environment
+        run: source /opt/ilcsoft/muonc/init_ilcsoft.sh
+      - name: test for files
+        run: ls
+      - name: Simulate Events
+        run: ddsim --inputFiles electronGun_evgen.slcio --outputFile electronGun_sim.slcio --steeringFile simulation/013-electrongun/sim_steer.py
