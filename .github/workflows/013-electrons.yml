@@ -83,4 +83,4 @@ jobs:
         if: steps.cache-reco.outputs.cache-hit != 'true'
         run: |
           source /opt/ilcsoft/muonc/init_ilcsoft.sh
-          Marlin --global.LCIOInputFiles=electronGun_sim.slcio --MyDDMarlinPandora.DDPandoraPFANewProcessor=reconstruction/013-electrongun/PandoraSettings/PandoraSettingsDefault.xml --Output_REC.LCIOOutputFile=electronGun_reco.slcio reconstruction/013-electrongun/reco_steer_all.xml
+          Marlin --global.LCIOInputFiles=electronGun_sim.slcio --MyDDMarlinPandora.PandoraSettingsXmlFile=reconstruction/013-electrongun/PandoraSettings/PandoraSettingsDefault.xml --Output_REC.LCIOOutputFile=electronGun_reco.slcio reconstruction/013-electrongun/reco_steer_all.xml
