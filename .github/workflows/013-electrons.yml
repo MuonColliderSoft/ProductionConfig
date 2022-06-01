@@ -1,4 +1,4 @@
-name: Build Docker Images
+name: 013-electrongun
 on: ['push']
 jobs:
   evgen:
@@ -21,7 +21,7 @@ jobs:
         if: steps.cache-evgen.outputs.cache-hit != 'true'
         run: |
           source /opt/ilcsoft/muonc/init_ilcsoft.sh
-          python evtgen/013-electrongun/gen_electron_gun.py -o electronGun_evgen.slcio -n 10 && ls
+          python evtgen/013-electrongun/gen_electron_gun.py -o electronGun_evgen.slcio -n 10
   sim:
     runs-on: ubuntu-latest
     container: infnpd/mucoll-ilc-framework:1.6-centos8
@@ -46,8 +46,6 @@ jobs:
         with:
           path: ./electronGun_sim.slcio
           key: events-${{ hashFiles('simulation/013-electrongun/sim_steer.py') }}
-      - name: test for files
-        run: ls
       - name: Simulate Events
         if: steps.cache-sim.outputs.cache-hit != 'true'
         run: |
@@ -77,8 +75,6 @@ jobs:
         with:
           path: ./electronGun_evgen.slcio
           key: events-${{ hashFiles('reconstruction/013-electrongun/reco_steer_all.xml') }}
-      - name: test for files
-        run: ls
       - name: Reconstruct Events
         if: steps.cache-reco.outputs.cache-hit != 'true'
         run: |
