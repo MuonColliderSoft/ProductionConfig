@@ -1,13 +1,5 @@
 name: Build Docker Images
-on:
-  push:
-    branches:
-      - 'master'
-    tags:
-      - 'v*'
-  pull_request:
-    branches:
-      - 'master'
+on: ['push']
 jobs:
   evgen:
     runs-on: ubuntu-latest
