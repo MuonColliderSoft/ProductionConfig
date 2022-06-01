@@ -53,10 +53,7 @@ jobs:
           ddsim --inputFiles electronGun_evgen.slcio --outputFile electronGun_sim.slcio --steeringFile simulation/013-electrongun/sim_steer.py
   reco:
     runs-on: ubuntu-latest
-    container:
-      image: infnpd/mucoll-ilc-framework:1.6-centos8
-      volumes:
-        - reconstruction/013-electrongun:/data/config
+    container: infnpd/mucoll-ilc-framework:1.6-centos8
     needs: sim
     steps:
       -
@@ -82,4 +79,4 @@ jobs:
         if: steps.cache-reco.outputs.cache-hit != 'true'
         run: |
           source /opt/ilcsoft/muonc/init_ilcsoft.sh
-          Marlin --global.LCIOInputFiles=electronGun_sim.slcio --Output_REC.LCIOOutputFile=electronGun_reco.slcio reconstruction/013-electrongun/reco_steer_all.xml
+          Marlin --global.LCIOInputFiles=electronGun_sim.slcio --MyDDMarlinPandora.PandoraSettingsXmlFile=reconstruction/013-electrongun/PandoraSettings/PandoraSettingsDefault.xml --Output_REC.LCIOOutputFile=electronGun_reco.slcio reconstruction/013-electrongun/reco_steer_all.xml
