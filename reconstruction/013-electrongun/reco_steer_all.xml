@@ -789,7 +789,7 @@
   <!-- ======================================================================================================== -->
 
   <processor name="MyDDMarlinPandora" type="DDPandoraPFANewProcessor">
-	  <parameter name="PandoraSettingsXmlFile" type="String">config/PandoraSettings/PandoraSettingsDefault.xml</parameter>
+	  <parameter name="PandoraSettingsXmlFile" type="String">/data/config/PandoraSettings/PandoraSettingsDefault.xml</parameter>
     <!-- CLIC specifict software compensation weights derived from K0L and neutrons -->
     <parameter name="SoftwareCompensationWeights" type="FloatVec">1.61741 -0.00444385 2.29683e-05 -0.0731236 -0.00157099 -7.09546e-07 0.868443 1.0561 -0.0238574</parameter>
     <parameter name="SoftwareCompensationEnergyDensityBins" type="FloatVec">0 2. 5. 7.5 9.5 13. 16. 20. 23.5 28. 33. 40. 50. 75. 100.</parameter>
