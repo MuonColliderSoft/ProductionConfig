@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!--
+?xml-stylesheet type="text/xsl"
+href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
+-->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+
+    <!-- ========== setup  ========== -->
+    <processor name="MyAIDAProcessor"/> 
+
+    <processor name="MyFastJetProcessor" />
+
+    <!-- <processor name="MyFastJetMCProcessor" /> -->
+    <!-- <processor name="MyLCIOOutputProcessor" /> -->
+
+    <group name="MergeCollections" />
+
+    <processor name="MyLCTuple" />
+
+  </execute>
+
+  
+  <global>
+    <parameter name="LCIOInputFiles"> 
+      input_file.slcio
+    </parameter>
+    <parameter name="MaxRecordNumber" value="-1" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity"	options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE0  </parameter>
+  </global>
+
+  
+  <processor name="MyAIDAProcessor" type="AIDAProcessor">
+    <!--Processor that handles AIDA files. Creates on directory per processor.  Processors only need to create and fill the histograms, clouds and tuples. Needs to be the first ActiveProcessor-->
+    <!-- compression of output file 0: false >0: true (default) -->
+    <parameter name="Compress" type="int" value="1"/>
+    <!-- filename without extension-->
+    <parameter name="FileName" type="string" value="ntuple"/>
+    <!-- type of output file xml (default) or root ( only OpenScientist)-->
+    <parameter name="FileType" type="string" value="root "/>
+  </processor>
+
+  <processor name="MyLCTuple" type="LCTuple">
+    <!--LCTuple creates a ROOT TTRee with a column wise ntuple from LCIO collections ....-->
+    <!-- <parameter name="FullSubsetCollections" type="StringVec"> EfficientMCParticles InefficientMCParticles </parameter> -->
+    <!--Name of the CalorimeterHit collection-->
+    <!-- <parameter name="CalorimeterHitCollection" type="string" lcioInType="CalorimeterHit"> </parameter> -->
+    <!--Name of the Cluster collection-->
+    <!-- <parameter name="ClusterCollection" type="string" lcioInType="Cluster"> </parameter> -->
+    <!--Name of the IsoLep collection-->
+    <!-- <parameter name="IsoLepCollection" type="string" lcioInType="ReconstructedParticle"> </parameter> -->
+    <!--Name of the Jet collection-->
+    <parameter name="JetCollection" type="string" lcioInType="ReconstructedParticle"> JetOut </parameter>
+    <!--Switch to write out extra parameters calculated using information from Jet Finder-->
+    <!-- <parameter name="JetCollectionExtraParameters" type="bool">true </parameter> -->
+    <!--Switch to write out jet parameters coming from LCFIPlus tagging processor-->
+    <!-- <parameter name="JetCollectionTaggingParameters" type="bool">false </parameter> -->
+    <!--Names of LCRelation collections - need parallel prefix names in RelPrefixes-->
+    
+    <!--Names of LCRelation collections - need parallel prefix names in RelPrefixes-->
+    <parameter name="LCRelationCollections" type="StringVec" lcioInType="LCRelation">
+      RecoMCTruthLink
+    </parameter>
+    
+    <!-- Names of prefixes for variables from LCRelation collections - needs to be parallel to LCRelationCollections (one prefix per collection)-->
+    <parameter name="LCRelationPrefixes" type="StringVec">
+      r2
+    </parameter>
+
+
+    <!--Names of LCRelation collections of PFO-->
+    <!-- <parameter name="LCRelationwithPFOCollections" type="string" lcioInType="LCRelation"> </parameter> -->
+
+    <!--Name of the MCParticle collection-->
+    <parameter name="MCParticleCollection" type="string" lcioInType="MCParticle"> MCParticle </parameter>
+    <!-- <parameter name="MCParticleNotReco" type="string" lcioOutType="MCParticle"> </parameter> -->
+    <!--Name of the MCParticle collection where the overlay is removed-->
+    <!--parameter name="MCParticleRemoveOverlayCollection" type="string" lcioInType="MCParticle"> </parameter-->
+    <!--Name of the PFO collection with Relation-->
+    <!-- <parameter name="PFOwithRelationCollection" type="string" lcioInType="ReconstructedParticle"> </parameter> -->
+    <!--Name of the ReconstructedParticle collection-->
+    <parameter name="RecoParticleCollection" type="string" lcioInType="ReconstructedParticle"> MergedRecoParticles </parameter>
+    <!--Name of the SimCalorimeterHit collection-->
+    <!-- <parameter name="SimCalorimeterHitCollection" type="string" lcioInType="SimCalorimeterHit"> </parameter> -->
+    <!--Name of the SimTrackerHit collection-->
+    <!-- <parameter name="SimTrackerHitCollection" type="string" lcioInType="SimTrackerHit"> -->
+    <!--   MergedTrackerSimHits -->
+    <!-- </parameter> -->
+    <!--Name of the Track collection-->
+    <parameter name="TrackCollection" type="string" lcioInType="Track">SiTracks_Refitted </parameter>
+    <!--Name of the TrackerHit collection-->
+    <!-- <parameter name="TrackerHitCollection" type="string" lcioInType="TrackerHit"> -->
+    <!--   MergedTrackerHits -->
+    <!-- </parameter> -->
+    
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+    <!--parameter name="Verbosity" type="string">DEBUG </parameter-->
+    <!--Name of the Vertex collection-->
+    <parameter name="VertexCollection" type="string" lcioInType="Vertex"> PrimaryVertices </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteCalorimeterHitCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteClusterCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteIsoLepCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteJetCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteMCParticleCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteRecoParticleCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteSimCalorimeterHitCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteSimTrackerHitCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteTrackCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteTrackerHitCollectionParameters" type="bool">false </parameter>
+    <!--Switch to write out collection parameters-->
+    <parameter name="WriteVertexCollectionParameters" type="bool">false </parameter>
+  </processor>
+
+
+  <processor name="MyFastJetProcessor" type="FastJetProcessor">
+    <parameter name="algorithm" type="StringVec">kt_algorithm 0.5</parameter>
+    <parameter name="clusteringMode" type="StringVec"> Inclusive 5</parameter>
+    <parameter name="jetOut" type="string" lcioOutType="ReconstructedParticle">JetOut </parameter>
+    <parameter name="recParticleIn" type="string" lcioInType="ReconstructedParticle"> PandoraPFOs </parameter>
+    
+    <parameter name="recombinationScheme" type="string">E_scheme </parameter>
+  </processor>
+
+  <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+    <parameter name="LCIOOutputFile" type="string">outputfile.slcio </parameter>
+    <parameter name="LCIOWriteMode" type="string">WRITE_NEW</parameter>
+    <!--parameter name="SplitFileSizekB" type="int">1992294 </parameter-->
+  </processor>
+
+  <processor name="ProgressProcessor" type="ProgressProcessor">
+  </processor>
+
+
+  <group name="MergeCollections">
+
+    
+   <processor name="MergeTrackerHits" type="MergeCollections">
+      <parameter name="CollectionParameterIndex" type="int">0 </parameter>
+      <!-- <parameter name="InputCollectionIDs" type="IntVec"> </parameter> -->
+      <parameter name="InputCollections" type="StringVec">
+	VBTrackerHits                 
+	VETrackerHits                 
+	IBTrackerHits
+	IETrackerHits
+	OBTrackerHits
+	OETrackerHits
+      </parameter>
+      <parameter name="OutputCollection" type="string"> MergedTrackerHits </parameter>
+    </processor>
+
+    <processor name="MergeTrackerSimHits" type="MergeCollections">
+      <parameter name="CollectionParameterIndex" type="int">0 </parameter>
+      <!-- <parameter name="InputCollectionIDs" type="IntVec"> </parameter> -->
+      <parameter name="InputCollections" type="StringVec">
+	VertexBarrelCollection
+	VertexEndcapCollection
+	InnerTrackerBarrelCollection
+	InnerTrackerEndcapCollection
+	OuterTrackerBarrelCollection
+	OuterTrackerEndcapCollection
+      </parameter>
+      <parameter name="OutputCollection" type="string"> MergedTrackerSimHits </parameter>
+    </processor>
+
+    <processor name="MergeTrackerHitsRelations" type="MergeCollections">
+      <parameter name="CollectionParameterIndex" type="int">0 </parameter>
+      <!-- <parameter name="InputCollectionIDs" type="IntVec"> </parameter> -->
+      <parameter name="InputCollections" type="StringVec">
+	VBTrackerHitRelations  
+	VETrackerHitRelations 
+	IBTrackerHitsRelations 
+	IETrackerHitsRelations 
+	OBTrackerHitsRelations 
+	OETrackerHitsRelations 
+      </parameter>
+      <parameter name="OutputCollection" type="string"> MergedTrackerHitsRelations </parameter>
+    </processor>
+
+  </group>
+   
+  
+
+
+  
+</marlin>
