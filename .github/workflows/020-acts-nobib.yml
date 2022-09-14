@@ -70,7 +70,7 @@ jobs:
           key: events-${{ hashFiles('simulation/013-electrongun/sim_steer.py') }}
       -
         id: cache-reco
-        name: Cache Event Generation
+        name: Cache Reconstruction
         uses: actions/cache@v2
         with:
           path: ./electronGun_evgen.slcio
