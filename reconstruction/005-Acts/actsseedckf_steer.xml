@@ -48,7 +48,7 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <!-- ==========  ACTs  ========== -->
     <processor name="MyCKFTracking"/>
     <processor name="MyTrackDeduper"/>
-    <processor name="MyTrackTruth"/>
+    <#processor name="MyTrackTruth"/>
 
     <!-- ========== Tracking.xml  ========== -->
     <processor name="Refit" />
@@ -78,6 +78,8 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
   <include ref="confile/PFOSelector.xml"/>
   <include ref="confile/VertexJet.xml"/>
 
+
+
   <!-- ======================================================================================================== -->
   <!-- ======================================================================================================== -->
   <!-- == Input configuration                                                                               == -->
@@ -85,7 +87,7 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
   <!-- ======================================================================================================== -->
 
   <global>
-    <parameter name="LCIOInputFiles"></parameter>
+    <parameter name="LCIOInputFiles">input.slcio</parameter>
     <!-- Limit the number of processed records (run+evt): -->
     <parameter name="MaxRecordNumber" value="100" />
     <parameter name="SkipNEvents" value="0" />
@@ -146,7 +148,9 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <parameter name="LCIOWriteMode" type="string" value="WRITE_NEW"/>
     <!-- <parameter name="SplitFileSizekB" type="int">996147 </parameter> -->
     <parameter name="Verbosity" type="string">WARNING </parameter>
-    <parameter name="DropCollectionNames" type="StringVec">  </parameter>
+    <parameter name="DropCollectionNames" type="StringVec">  
+      SeedTracks
+    </parameter>
     <parameter name="DropCollectionTypes" type="StringVec">
       TrackerHitPlane
       SimTrackerHit
@@ -177,32 +181,74 @@ href="http://ilcsoft.desy.de/marlin/marlin.xsl"?
     <parameter name="Particle2TrackRelationName" type="string" lcioOutType="LCRelation">MCParticle_Tracks</parameter>
   </processor>
 
-  <processor name="MyLCTuple" type="LCTuple">
-    <!--Name of the MCParticle collection-->
-    <parameter name="MCParticleCollection" type="string" lcioInType="MCParticle">MCParticle</parameter>
-    <!--Name of the Track collection-->
-    <parameter name="TrackCollection" type="string" lcioInType="Track">SiTracks</parameter>
-    <!--Relations-->
-    <parameter name="LCRelationCollections" type="string" lcioInType="LCRelation">MCParticle_Tracks</parameter>
-    <parameter name="LCRelationPrefixes" type="string">mctr</parameter>
-    <!--Switch to write out collection parameters-->
-    <parameter name="WriteMCParticleCollectionParameters" type="bool">false </parameter>
-    <!--Switch to write out collection parameters-->
-    <parameter name="WriteTrackCollectionParameters" type="bool">true </parameter>
-    <!--Name of the Jet collection-->
-    <parameter name="JetCollection" type="string" lcioInType="ReconstructedParticle"> JetCaloOut </parameter>
-    <!--Switch to write out extra parameters calculated using information from Jet Finder-->
-    <parameter name="JetCollectionExtraParameters" type="bool">true </parameter>
-    <!--Switch to write out jet parameters coming from LCFIPlus tagging processor-->
-    <parameter name="JetCollectionTaggingParameters" type="bool">false </parameter>
-    <!--Switch to write out collection parameters-->
-    <parameter name="WriteJetCollectionParameters" type="bool">true </parameter>
-    <!--Switch to write out jet daughters parameters-->
-    <parameter name="JetCollectionDaughtersParameters" type="bool">true </parameter>
-    <!--Switch to write out collection parameters-->
+	<processor name="MyLCTuple" type="LCTuple">
+		<!-- LCTuple creates a ROOT TTRee with a column wise ntuple from LCIO collections -->
+		<parameter name="FullSubsetCollections" type="StringVec"> </parameter>
+		<!-- Name of input collections -->
+		<parameter name="CalorimeterHitCollection" type="string" lcioInType="CalorimeterHit"> </parameter>
+		<parameter name="ClusterCollection" type="string" lcioInType="Cluster"> PandoraClusters </parameter>
+		<parameter name="IsoLepCollection" type="string" lcioInType="ReconstructedParticle"> </parameter>
+		<parameter name="JetCollection" type="string" lcioInType="ReconstructedParticle"> JetCaloOut </parameter>
+		<!-- Switch to write out extra parameters calculated using information from Jet Finder -->
+		<parameter name="JetCollectionExtraParameters" type="bool"> false </parameter>
+		<!-- Switch to write out jet parameters coming from LCFIPlus tagging processor -->
+		<parameter name="JetCollectionTaggingParameters" type="bool"> false </parameter>
+		<!--Switch to write out jet daughters parameters-->
+		<parameter name="JetCollectionDaughtersParameters" type="bool"> true </parameter>
 
+		<!-- Names of LCRelation collections - need parallel prefix names in RelPrefixes -->
+		<parameter name="LCRelationCollections" type="StringVec" lcioInType="LCRelation"> </parameter>
+		<!-- Names of prefixes for variables from LCRelation collections -->
+		<!-- needs to be parallel to LCRelationCollections (one prefix per collection) -->
+		<parameter name="LCRelationPrefixes" type="StringVec"> </parameter>
+		<!-- Names of LCRelation collections of PFO -->
+		<parameter name="LCRelationwithPFOCollections" type="string" lcioInType="LCRelation"> </parameter>
 
-  </processor>
+		<!-- Name of the MCParticle collection -->
+		<parameter name="MCParticleCollection" type="string" lcioInType="MCParticle"> MCPhysicsParticles </parameter>
+		<parameter name="MCParticleNotReco" type="string" lcioOutType="MCParticle"> </parameter>
+		<!-- Name of the MCParticle collection where the overlay is removed -->
+		<!-- parameter name="MCParticleRemoveOverlayCollection" type="string" lcioInType="MCParticle"> </parameter -->
+		<!-- Name of the PFO collection with Relation -->
+		<!-- parameter name="PFOwithRelationCollection" type="string" lcioInType="ReconstructedParticle"> </parameter -->
+		<!-- Name of the ReconstructedParticle collection -->
+		<parameter name="RecoParticleCollection" type="string" lcioInType="ReconstructedParticle"> PandoraPFOs </parameter>
+		<!-- Name of the SimCalorimeterHit collection -->
+		<parameter name="SimCalorimeterHitCollection" type="string" lcioInType="SimCalorimeterHit"> </parameter>
+		<!-- Name of the SimTrackerHit collection -->
+		<parameter name="SimTrackerHitCollection" type="string" lcioInType="SimTrackerHit"> </parameter>
+		<!-- Name of the Track collection -->
+		<parameter name="TrackCollection" type="string" lcioInType="Track"> SiTracks_Refitted </parameter>
+		<!-- Name of the TrackerHit collection -->
+		<parameter name="TrackerHitCollection" type="string" lcioInType="TrackerHit"> </parameter>
+
+		<!-- verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT") -->
+		<!-- parameter name="Verbosity" type="string"> DEBUG </parameter -->
+		<!-- Name of the Vertex collection -->
+		<parameter name="VertexCollection" type="string" lcioInType="Vertex"> </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteCalorimeterHitCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteClusterCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteIsoLepCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteJetCollectionParameters" type="bool"> true </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteMCParticleCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteRecoParticleCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteSimCalorimeterHitCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteSimTrackerHitCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteTrackCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteTrackerHitCollectionParameters" type="bool"> false </parameter>
+		<!-- Switch to write out collection parameters -->
+		<parameter name="WriteVertexCollectionParameters" type="bool"> false </parameter>
+	</processor>
 
   <!-- ======================================================================================================== -->
   <!-- ======================================================================================================== -->
