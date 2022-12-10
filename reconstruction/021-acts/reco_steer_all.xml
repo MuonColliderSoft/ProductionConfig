@@ -577,12 +577,12 @@
   </processor>
 
   <processor name="MyTrackDeduper" type="ACTSDuplicateRemoval">
-    <parameter name="InputTrackCollectionName" type="string" lcioOutType="Track">AllTracks</parameter>
+    <parameter name="InputTrackCollectionName" type="string" lcioInType="Track">AllTracks</parameter>
     <parameter name="OutputTrackCollectionName" type="string" lcioOutType="Track">DedupedTracks</parameter>
   </processor>
 
   <processor name="MyTrackFilter" type="FilterTracks">
-    <parameter name="InputTrackCollectionName" type="string" lcioOutType="Track">DedupedTracks</parameter>
+    <parameter name="InputTrackCollectionName" type="string" lcioInType="Track">DedupedTracks</parameter>
     <parameter name="OutputTrackCollectionName" type="string" lcioOutType="Track">SiTracks</parameter>
     <parameter name="MinPt" type="float">0.5</parameter>
     <parameter name="NHitsTotal" type="int">6</parameter>
