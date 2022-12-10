@@ -576,7 +576,7 @@
   </processor>
 
   <processor name="MyTrackDeduper" type="ACTSDuplicateRemoval">
-    <parameter name="InputTrackCollectionName" type="string" lcioOutType="Track">AllTracks</parameter>
+    <parameter name="InputTrackCollectionName" type="string" lcioInType="Track">AllTracks</parameter>
     <parameter name="OutputTrackCollectionName" type="string" lcioOutType="Track">SiTracks</parameter>
   </processor>
 
