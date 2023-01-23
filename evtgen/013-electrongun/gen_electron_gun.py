@@ -13,20 +13,25 @@ import math
 import random
 from array import array
 
+import argparse
+
 # --- LCIO dependencies ---
 from pyLCIO import UTIL, EVENT, IMPL, IO, IOIMPL
 
-#---- number of events ----------------------
-nevt = 100000
+#---- configuration options ----------------------
 
-outfile = "electronGun_gen.slcio"
+parser = argparse.ArgumentParser(description='Generate single particle events')
+parser.add_argument('-n', '--nEvents', type=int, default=100000, help='number of events to generate')
+parser.add_argument('-o', '--output', type=str, default='electronGun_gen.slcio', help='output file name')
+
+args = parser.parse_args()
 
 #--------------------------------------------
 
 
 wrt = IOIMPL.LCFactory.getInstance().createLCWriter( )
 
-wrt.open( outfile , EVENT.LCIO.WRITE_NEW ) 
+wrt.open( args.output , EVENT.LCIO.WRITE_NEW )
 
 random.seed()
 
@@ -55,7 +60,7 @@ theta_max = 170./180.*math.pi
 #=================================================
 
 
-for j in range( 0, nevt ):
+for j in range( 0, args.nEvents ):
 
     col = IMPL.LCCollectionVec( EVENT.LCIO.MCPARTICLE ) 
     evt = IMPL.LCEventImpl() 

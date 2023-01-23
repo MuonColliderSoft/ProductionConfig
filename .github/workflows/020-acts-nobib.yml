@@ -1,0 +1,82 @@
+name: 020-acts-nobib
+on: ['push']
+jobs:
+  evgen:
+    runs-on: ubuntu-latest
+    container: infnpd/mucoll-ilc-framework:1.6-centos8
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        id: cache-evgen
+        name: Cache Event Generation
+        uses: actions/cache@v2
+        with:
+          path: ./electronGun_evgen.slcio
+          key: events-${{ hashFiles('evtgen/013-electrongun/gen_electron_gun.py') }}
+      - name: Generate Events
+        if: steps.cache-evgen.outputs.cache-hit != 'true'
+        run: |
+          source /opt/ilcsoft/muonc/init_ilcsoft.sh
+          python evtgen/013-electrongun/gen_electron_gun.py -o electronGun_evgen.slcio -n 10
+  sim:
+    runs-on: ubuntu-latest
+    container: infnpd/mucoll-ilc-framework:1.6-centos8
+    needs: evgen
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        id: cache-evgen
+        name: Cache Event Generation
+        uses: actions/cache@v2
+        with:
+          path: ./electronGun_evgen.slcio
+          key: events-${{ hashFiles('evtgen/013-electrongun/gen_electron_gun.py') }}
+      -
+        id: cache-sim
+        name: Cache Simulation
+        uses: actions/cache@v2
+        with:
+          path: ./electronGun_sim.slcio
+          key: events-${{ hashFiles('simulation/013-electrongun/sim_steer.py') }}
+      - name: Simulate Events
+        if: steps.cache-sim.outputs.cache-hit != 'true'
+        run: |
+          source /opt/ilcsoft/muonc/init_ilcsoft.sh
+          ddsim --inputFiles electronGun_evgen.slcio --outputFile electronGun_sim.slcio --steeringFile simulation/013-electrongun/sim_steer.py
+  reco:
+    runs-on: ubuntu-latest
+    container: infnpd/mucoll-ilc-framework:1.6-centos8
+    needs: sim
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      -
+        id: cache-sim
+        name: Cache Simulation
+        uses: actions/cache@v2
+        with:
+          path: ./electronGun_sim.slcio
+          key: events-${{ hashFiles('simulation/013-electrongun/sim_steer.py') }}
+      -
+        id: cache-reco
+        name: Cache Event Generation
+        uses: actions/cache@v2
+        with:
+          path: ./electronGun_evgen.slcio
+          key: events-${{ hashFiles('reconstruction/020-acts-nobib/reco_steer_all.xml') }}
+      - name: Reconstruct Events
+        if: steps.cache-reco.outputs.cache-hit != 'true'
+        run: |
+          source /opt/ilcsoft/muonc/init_ilcsoft.sh
+          Marlin --global.LCIOInputFiles=electronGun_sim.slcio --MyDDMarlinPandora.PandoraSettingsXmlFile=reconstruction/020-acts-nobib/PandoraSettings/PandoraSettingsDefault.xml --Output_REC.LCIOOutputFile=electronGun_reco.slcio reconstruction/020-acts-nobib/reco_steer_all.xml
